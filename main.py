@@ -1,0 +1,26 @@
+import streamlit as st
+import requests
+import time
+
+st.title("🔄 Realtime Dashboard dari Flask API")
+
+# Tempat kosong untuk menampilkan data yang akan diperbarui
+placeholder = st.empty()
+
+# Jalankan loop update otomatis
+while True:
+    try:
+        response = requests.get("http://localhost:5000/api/data")
+        data = response.json()
+
+        with placeholder.container():
+            st.markdown("### 📊 Data Sensor:")
+            st.write(f"🌡️ Suhu       : {data['temperature']} °C")
+            st.write(f"💧 Kelembaban : {data['humidity']} %")
+            st.write(f"📌 Status     : **{data['status']}**")
+
+    except Exception as e:
+        st.error(f"Gagal mengambil data: {e}")
+
+    # Tunggu 2 detik sebelum update lagi
+    time.sleep(2)
