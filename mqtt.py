@@ -39,13 +39,17 @@ def main():
 
     # Display real-time sensor data
     while True:
+        # Check if data is available
         if sensor_data["temperature"] is not None:
+            # Update the display
             placeholder.markdown("📊 Data Sensor")
             placeholder.write(f"🌡️ Suhu       : {sensor_data['temperature']} °C")
             placeholder.write(f"💧 Kelembaban : {sensor_data['humidity']} %")
         else:
             placeholder.write("Data belum tersedia.")
-        time.sleep(1)  # Add sleep to prevent excessive CPU usage
+
+        # Wait for the next event and avoid busy-wait
+        st.experimental_rerun()
 
 if __name__ == "__main__":
     main()
