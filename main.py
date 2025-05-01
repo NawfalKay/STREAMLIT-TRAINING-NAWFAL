@@ -17,6 +17,10 @@ while True:
         response = requests.get(url, timeout=5)  # Set timeout 5 detik
         response.raise_for_status()  # Memastikan status 200 OK
 
+        # Tampilkan response raw untuk debugging
+        st.write("Response Raw:")
+        st.write(response.text)
+
         # Cek apakah response JSON valid
         if response.status_code == 200:
             try:
