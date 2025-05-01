@@ -1,60 +1,55 @@
 import streamlit as st
 import paho.mqtt.client as mqtt
 import json
-import time
+import threading
 
-# MQTT Setup
-BROKER = "broker.emqx.io"  # Broker yang digunakan
+# MQTT Configuration
+BROKER = "broker.emqx.io"
+PORT = 1883
 TOPIC_SENSOR = "/Phaethon/Nawfal_Kaysan_Rehma_Ely/data_sensor"
-CLIENT_ID = ""  # Tanpa CLIENT_ID, Paho MQTT akan membuatkan ID unik
+CLIENT_ID = "streamlit_client"
 
 # Global variable to store sensor data
 sensor_data = {"temperature": None, "humidity": None}
 
-# MQTT callback function to handle incoming messages
+# MQTT callback functions
+def on_connect(client, userdata, flags, rc):
+    print(f"Connected to MQTT Broker with result code {rc}")
+    # Subscribe to the topic
+    client.subscribe(TOPIC_SENSOR)
+
 def on_message(client, userdata, msg):
     global sensor_data
     try:
-        # Parse the JSON data received from the MQTT broker
-        sensor_data = json.loads(msg.payload.decode())
-        st.write(f"Received data: {sensor_data}")  # Tampilkan data yang diterima
+        # Parse the JSON data from the MQTT message
+        data = json.loads(msg.payload.decode())
+        sensor_data = data
     except Exception as e:
-        st.error(f"Error parsing data: {e}")
+        print("Error parsing message:", e)
 
-# Setup MQTT client
-def setup_mqtt():
+# MQTT client setup
+def mqtt_thread():
     client = mqtt.Client(CLIENT_ID)
+    client.on_connect = on_connect
     client.on_message = on_message
-    try:
-        client.connect(BROKER)
-        client.subscribe(TOPIC_SENSOR)
-        st.write("Connected to MQTT Broker")
-    except Exception as e:
-        st.error(f"Failed to connect to MQTT: {e}")
-    return client
+    client.connect(BROKER, PORT, 60)
+    client.loop_forever()
 
-# Main function for Streamlit app
-def main():
-    st.title("🔄 Dashboard Monitoring Suhu dan Kelembaban")
+# Start the MQTT client in a separate thread
+mqtt_thread = threading.Thread(target=mqtt_thread, daemon=True)
+mqtt_thread.start()
 
-    # Start MQTT client and loop in the background
-    client = setup_mqtt()
-    client.loop_start()  # Start the MQTT client loop
+# Streamlit UI setup
+st.title("Real-time Sensor Data")
+st.subheader("Temperature and Humidity from DHT22 Sensor")
 
-    # Placeholder for displaying real-time sensor data
-    placeholder = st.empty()
+# Display the data in real-time
+while True:
+    if sensor_data["temperature"] is not None and sensor_data["humidity"] is not None:
+        st.metric(label="Temperature (°C)", value=f"{sensor_data['temperature']:.2f} °C")
+        st.metric(label="Humidity (%)", value=f"{sensor_data['humidity']:.2f} %")
+    else:
+        st.write("Waiting for sensor data...")
 
-    # Display real-time sensor data
-    while True:
-        if sensor_data["temperature"] is not None:
-            placeholder.markdown("📊 Data Sensor")
-            placeholder.write(f"🌡️ Suhu       : {sensor_data['temperature']} °C")
-            placeholder.write(f"💧 Kelembaban : {sensor_data['humidity']} %")
-            st.write(f"Data terkini: {sensor_data}")
-        else:
-            placeholder.write("Data belum tersedia.")
-        
-        time.sleep(1)  # Gunakan delay ringan untuk memberi waktu bagi Streamlit untuk merender halaman
-
-if __name__ == "__main__":
-    main()
+    # Add a small delay to avoid high CPU usage
+    time.sleep(1)
