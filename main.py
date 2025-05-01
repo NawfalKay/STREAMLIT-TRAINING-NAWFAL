@@ -2,19 +2,22 @@ import streamlit as st
 import requests
 import time
 
-st.title("🔄  data SUHU dan kelembapan")
+st.title("🔄 SUHU dan kelembapan")
 
 # Tempat kosong untuk menampilkan data yang akan diperbarui
 placeholder = st.empty()
 
 # Tentukan URL ngrok dengan HTTPS
-url = "https://c4d0-103-136-58-244.ngrok-free.app/api/data"
+url = "https://0989-103-136-58-244.ngrok-free.app/api/data"
 
-# Jalankan loop update otomatis menggunakan st.experimental_rerun()
+# Jalankan loop update otomatis
 while True:
     try:
-        # Ambil data dari API Flask melalui ngrok
-        response = requests.get(url)
+        # Ambil data dari API Flask melalui ngrok dengan timeout handling
+        response = requests.get(url, timeout=5)  # Set timeout 5 detik
+        response.raise_for_status()  # Memastikan status 200 OK
+
+        # Konversi response menjadi JSON
         data = response.json()
 
         with placeholder.container():
@@ -23,9 +26,11 @@ while True:
             st.write(f"💧 Kelembaban : {data['humidity']} %")
             st.write(f"📌 Status     : **{data['status']}**")
 
-    except Exception as e:
+    except requests.exceptions.Timeout:
+        st.error("Waktu habis! Tidak dapat terhubung ke server.")
+    except requests.exceptions.RequestException as e:
         st.error(f"Gagal mengambil data: {e}")
 
     # Tunggu 2 detik sebelum update lagi
     time.sleep(2)
-    st.experimental_rerun()  # Memaksa streamlit untuk refresh
+    # Tidak perlu menggunakan st.experimental_rerun() jika sudah menggunakan st.empty() untuk refresh
