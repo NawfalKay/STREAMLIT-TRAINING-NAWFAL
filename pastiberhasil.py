@@ -1,56 +1,35 @@
 import streamlit as st
-import paho.mqtt.client as mqtt
-import json
+from flask import Flask, request, jsonify
 import threading
-import time
 
-# MQTT Configuration
-BROKER = "broker.emqx.io"
-PORT = 1883
-TOPIC_SENSOR = "sensor/data"
-CLIENT_ID = "streamlit_client"
-
-# Global variable to store sensor data
+# Data global untuk menyimpan suhu dan kelembapan
 sensor_data = {"temperature": None, "humidity": None}
 
-# MQTT callback functions
-def on_connect(client, userdata, flags, rc):
-    print(f"Connected to MQTT Broker with result code {rc}")
-    if rc == 0:  # Connection successful
-        client.subscribe(TOPIC_SENSOR)
-    else:
-        print("Failed to connect with result code " + str(rc))
+# Membuat aplikasi Flask
+app = Flask(__name__)
 
-def on_message(client, userdata, msg):
+@app.route('/update_data', methods=['POST'])
+def update_data():
     global sensor_data
-    try:
-        # Parse the JSON data from the MQTT message
-        data = json.loads(msg.payload.decode())
-        print(f"Data received from MQTT: {data}")  # Log data received
-        sensor_data = data
-    except Exception as e:
-        print("Error parsing message:", e)
+    data = request.json
+    if data:
+        sensor_data["temperature"] = data.get("temperature")
+        sensor_data["humidity"] = data.get("humidity")
+        return jsonify({"status": "success", "message": "Data updated successfully"}), 200
+    return jsonify({"status": "error", "message": "Invalid data"}), 400
 
-# MQTT client setup
-def mqtt_thread():
-    client = mqtt.Client(CLIENT_ID)
-    client.on_connect = on_connect
-    client.on_message = on_message
-    try:
-        client.connect(BROKER, PORT, 60)
-        client.loop_start()  # Use loop_start instead of loop_forever to run in background
-    except Exception as e:
-        print(f"Failed to connect to MQTT broker: {e}")
+# Menjalankan Flask di thread terpisah
+def run_flask():
+    app.run(host="0.0.0.0", port=8501)
 
-# Start the MQTT client in a separate thread
-mqtt_thread = threading.Thread(target=mqtt_thread, daemon=True)
-mqtt_thread.start()
+flask_thread = threading.Thread(target=run_flask, daemon=True)
+flask_thread.start()
 
-# Streamlit UI setup
+# Streamlit UI untuk menampilkan data
 st.title("Real-time Sensor Data")
 st.subheader("Temperature and Humidity from DHT22 Sensor")
 
-# Placeholder for displaying data
+# Placeholder untuk menampilkan data
 temperature_placeholder = st.empty()
 humidity_placeholder = st.empty()
 
