@@ -2,6 +2,7 @@ import streamlit as st
 import paho.mqtt.client as mqtt
 import json
 import threading
+import time
 
 # MQTT Configuration
 BROKER = "broker.emqx.io"
@@ -23,6 +24,7 @@ def on_message(client, userdata, msg):
     try:
         # Parse the JSON data from the MQTT message
         data = json.loads(msg.payload.decode())
+        print(f"Data received from MQTT: {data}")  # Log data received
         sensor_data = data
     except Exception as e:
         print("Error parsing message:", e)
@@ -43,11 +45,16 @@ mqtt_thread.start()
 st.title("Real-time Sensor Data")
 st.subheader("Temperature and Humidity from DHT22 Sensor")
 
+# Placeholder for displaying data
+temperature_placeholder = st.empty()
+humidity_placeholder = st.empty()
+
 # Display the data in real-time
 while True:
     if sensor_data["temperature"] is not None and sensor_data["humidity"] is not None:
-        st.metric(label="Temperature (°C)", value=f"{sensor_data['temperature']:.2f} °C")
-        st.metric(label="Humidity (%)", value=f"{sensor_data['humidity']:.2f} %")
+        # Update temperature and humidity data in real-time
+        temperature_placeholder.metric(label="Temperature (°C)", value=f"{sensor_data['temperature']:.2f} °C")
+        humidity_placeholder.metric(label="Humidity (%)", value=f"{sensor_data['humidity']:.2f} %")
     else:
         st.write("Waiting for sensor data...")
 
