@@ -17,26 +17,17 @@ while True:
         response = requests.get(url, timeout=5)  # Set timeout 5 detik
         response.raise_for_status()  # Memastikan status 200 OK
 
-        # Tampilkan response raw untuk debugging
-        st.write("Response Raw:")
-        st.write(response.text)
+        # Debug: Cetak response text untuk memastikan isinya
+        st.write(f"Response Text: {response.text}")  # Cek isi response
 
-        # Cek apakah response memiliki data dalam format JSON yang valid
-        if response.status_code == 200:
-            # Coba memparsing text secara manual
-            try:
-                data = response.json()  # Coba mengonversi menjadi JSON
-                with placeholder.container():
-                    st.markdown("### 📊 Data Sensor:")
-                    st.write(f"🌡️ Suhu       : {data['temperature']} °C")
-                    st.write(f"💧 Kelembaban : {data['humidity']} %")
-                    st.write(f"📌 Status     : **{data['status']}**")
-            except ValueError:
-                # Jika gagal parsing JSON, tampilkan raw response
-                st.error("Gagal mengonversi response menjadi JSON. Response raw:")
-                st.write(response.text)
-        else:
-            st.error(f"Server mengembalikan status code {response.status_code}")
+        # Konversi response menjadi JSON
+        data = response.json()
+
+        with placeholder.container():
+            st.markdown("### 📊 Data Sensor:")
+            st.write(f"🌡️ Suhu       : {data['temperature']} °C")
+            st.write(f"💧 Kelembaban : {data['humidity']} %")
+            st.write(f"📌 Status     : **{data['status']}**")
 
     except requests.exceptions.Timeout:
         st.error("Waktu habis! Tidak dapat terhubung ke server.")
