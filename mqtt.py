@@ -4,7 +4,7 @@ import json
 
 # MQTT Setup
 BROKER = "broker.emqx.io"  # Ganti dengan broker MQTT yang Anda gunakan
-TOPIC_SENSOR = "/Phaethon/Nawfal_Kaysan_Rehma_Ely/data_sensor"
+TOPIC_SENSOR = "sensor/data"
 CLIENT_ID = "streamlit-client"  # Ganti dengan ID klien unik jika diperlukan
 
 # Global variable to store sensor data
