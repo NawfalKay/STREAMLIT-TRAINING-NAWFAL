@@ -1,11 +1,12 @@
 import streamlit as st
 import paho.mqtt.client as mqtt
 import json
-import time  # Pastikan untuk mengimpor modul time
+import time
 
 # MQTT Setup
-BROKER = "broker.emqx.io"  # Ganti dengan broker MQTT yang Anda gunakan
-TOPIC_SENSOR = "sensor/data"
+BROKER = "broker.emqx.io"  # Broker yang digunakan
+TOPIC_SENSOR = "/Phaethon/Nawfal_Kaysan_Rehma_Ely/data_sensor"
+CLIENT_ID = ""  # Tanpa CLIENT_ID, Paho MQTT akan membuatkan ID unik
 
 # Global variable to store sensor data
 sensor_data = {"temperature": None, "humidity": None}
@@ -16,15 +17,20 @@ def on_message(client, userdata, msg):
     try:
         # Parse the JSON data received from the MQTT broker
         sensor_data = json.loads(msg.payload.decode())
+        st.write(f"Received data: {sensor_data}")  # Tampilkan data yang diterima
     except Exception as e:
         st.error(f"Error parsing data: {e}")
 
 # Setup MQTT client
 def setup_mqtt():
-    client = mqtt.Client()  # Tanpa CLIENT_ID, Paho MQTT akan membuatkan ID unik
+    client = mqtt.Client(CLIENT_ID)
     client.on_message = on_message
-    client.connect(BROKER)
-    client.subscribe(TOPIC_SENSOR)
+    try:
+        client.connect(BROKER)
+        client.subscribe(TOPIC_SENSOR)
+        st.write("Connected to MQTT Broker")
+    except Exception as e:
+        st.error(f"Failed to connect to MQTT: {e}")
     return client
 
 # Main function for Streamlit app
@@ -40,16 +46,14 @@ def main():
 
     # Display real-time sensor data
     while True:
-        # Check if data is available
         if sensor_data["temperature"] is not None:
-            # Update the display
             placeholder.markdown("📊 Data Sensor")
             placeholder.write(f"🌡️ Suhu       : {sensor_data['temperature']} °C")
             placeholder.write(f"💧 Kelembaban : {sensor_data['humidity']} %")
+            st.write(f"Data terkini: {sensor_data}")
         else:
             placeholder.write("Data belum tersedia.")
         
-        # Menunggu sedikit waktu sebelum memperbarui tampilan (menggunakan time.sleep dari Python)
         time.sleep(1)  # Gunakan delay ringan untuk memberi waktu bagi Streamlit untuk merender halaman
 
 if __name__ == "__main__":
