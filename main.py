@@ -11,6 +11,7 @@ placeholder = st.empty()
 while True:
     try:
         response = requests.get("https://0989-103-136-58-244.ngrok-free.app/api/data")
+
         data = response.json()
 
         with placeholder.container():
