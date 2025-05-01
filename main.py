@@ -2,13 +2,13 @@ import streamlit as st
 import requests
 import time
 
-st.title("🔄 SUHU dan kelembapan")
+st.title("🔄  data SUHU dan kelembapan")
 
 # Tempat kosong untuk menampilkan data yang akan diperbarui
 placeholder = st.empty()
 
 # Tentukan URL ngrok dengan HTTPS
-url = "https://0989-103-136-58-244.ngrok-free.app/api/data"
+url = "https://c4d0-103-136-58-244.ngrok-free.app/api/data"
 
 # Jalankan loop update otomatis menggunakan st.experimental_rerun()
 while True:
