@@ -10,7 +10,7 @@ placeholder = st.empty()
 # Jalankan loop update otomatis
 while True:
     try:
-        response = requests.get("https://27a7-103-136-58-244.ngrok-free.app/api/data")
+        response = requests.get("http://127.0.0.1:5000/api/data")
         data = response.json()
 
         with placeholder.container():
