@@ -47,9 +47,9 @@ def main():
             placeholder.write(f"💧 Kelembaban : {sensor_data['humidity']} %")
         else:
             placeholder.write("Data belum tersedia.")
-
-        # Wait for the next event and avoid busy-wait
-        st.experimental_rerun()
+        
+        # Menunggu sedikit waktu sebelum memperbarui tampilan (tidak menggunakan time.sleep)
+        st.time.sleep(1)  # Gunakan delay ringan untuk memberi waktu bagi Streamlit untuk merender halaman
 
 if __name__ == "__main__":
     main()
