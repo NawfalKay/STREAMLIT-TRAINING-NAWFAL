@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import time
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 # Data global untuk menyimpan suhu dan kelembapan
 sensor_data = {"temperature": None, "humidity": None}
@@ -13,14 +14,15 @@ temperature_placeholder = st.empty()
 humidity_placeholder = st.empty()
 
 # Endpoint untuk menerima data HTTP POST
-from http.server import BaseHTTPRequestHandler, HTTPServer
-
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         global sensor_data
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length)
         data = json.loads(post_data.decode())
+        
+        # Debug: Print data yang diterima
+        print(f"Received data: {data}")
         
         # Update global sensor_data
         sensor_data["temperature"] = data["temperature"]
@@ -30,7 +32,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'application/json')
         self.end_headers()
         self.wfile.write(b'{"status": "success"}')
-        
+
 # Server HTTP untuk menerima data
 def run_server():
     server_address = ('', 8501)
