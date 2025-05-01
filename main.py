@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import time
 
-st.title("🔄 Data Sensor SUHU dan kelembapan")
+st.title("🔄 SUHU dan kelembapan")
 
 # Tempat kosong untuk menampilkan data yang akan diperbarui
 placeholder = st.empty()
