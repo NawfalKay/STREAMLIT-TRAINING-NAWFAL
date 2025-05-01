@@ -1,6 +1,7 @@
 import streamlit as st
 import paho.mqtt.client as mqtt
 import json
+import time  # Pastikan untuk mengimpor modul time
 
 # MQTT Setup
 BROKER = "broker.emqx.io"  # Ganti dengan broker MQTT yang Anda gunakan
@@ -48,8 +49,8 @@ def main():
         else:
             placeholder.write("Data belum tersedia.")
         
-        # Menunggu sedikit waktu sebelum memperbarui tampilan (tidak menggunakan time.sleep)
-        st.time.sleep(1)  # Gunakan delay ringan untuk memberi waktu bagi Streamlit untuk merender halaman
+        # Menunggu sedikit waktu sebelum memperbarui tampilan (menggunakan time.sleep dari Python)
+        time.sleep(1)  # Gunakan delay ringan untuk memberi waktu bagi Streamlit untuk merender halaman
 
 if __name__ == "__main__":
     main()
