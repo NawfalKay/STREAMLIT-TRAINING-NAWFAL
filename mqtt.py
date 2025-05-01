@@ -34,15 +34,18 @@ def main():
     client = setup_mqtt()
     client.loop_start()  # Start the MQTT client loop
 
+    # Placeholder for displaying real-time sensor data
+    placeholder = st.empty()
+
     # Display real-time sensor data
-    st.header("📊 Data Sensor")
     while True:
         if sensor_data["temperature"] is not None:
-            st.write(f"🌡️ Suhu       : {sensor_data['temperature']} °C")
-            st.write(f"💧 Kelembaban : {sensor_data['humidity']} %")
+            placeholder.markdown("📊 Data Sensor")
+            placeholder.write(f"🌡️ Suhu       : {sensor_data['temperature']} °C")
+            placeholder.write(f"💧 Kelembaban : {sensor_data['humidity']} %")
         else:
-            st.write("Data belum tersedia.")
-        st.experimental_rerun()  # Refresh the page periodically
+            placeholder.write("Data belum tersedia.")
+        time.sleep(1)  # Add sleep to prevent excessive CPU usage
 
 if __name__ == "__main__":
     main()
