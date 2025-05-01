@@ -5,7 +5,7 @@ import json
 # MQTT Setup
 BROKER = "broker.emqx.io"  # Ganti dengan broker MQTT yang Anda gunakan
 TOPIC_SENSOR = "sensor/data"
-CLIENT_ID = "streamlit-client"  # Ganti dengan ID klien unik jika diperlukan
+CLIENT_ID = "mqttx_26bc7b34"  # Ganti dengan ID klien unik jika diperlukan
 
 # Global variable to store sensor data
 sensor_data = {"temperature": None, "humidity": None}
