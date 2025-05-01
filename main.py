@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import time
 
-st.title("🔄 Realtime Dashboard dari Flask API")
+st.title("🔄data sensor")
 
 # Tempat kosong untuk menampilkan data yang akan diperbarui
 placeholder = st.empty()
