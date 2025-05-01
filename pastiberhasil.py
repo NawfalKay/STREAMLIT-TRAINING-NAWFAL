@@ -7,7 +7,7 @@ import time
 # MQTT Configuration
 BROKER = "broker.emqx.io"
 PORT = 1883
-TOPIC_SENSOR = "sensor/data"
+TOPIC_SENSOR = "/Phaethon/Nawfal_Kaysan_Rehma_Ely/data_sensor"
 CLIENT_ID = "streamlit_client"
 
 # Global variable to store sensor data
@@ -16,8 +16,10 @@ sensor_data = {"temperature": None, "humidity": None}
 # MQTT callback functions
 def on_connect(client, userdata, flags, rc):
     print(f"Connected to MQTT Broker with result code {rc}")
-    # Subscribe to the topic
-    client.subscribe(TOPIC_SENSOR)
+    if rc == 0:  # Connection successful
+        client.subscribe(TOPIC_SENSOR)
+    else:
+        print("Failed to connect with result code " + str(rc))
 
 def on_message(client, userdata, msg):
     global sensor_data
@@ -34,8 +36,11 @@ def mqtt_thread():
     client = mqtt.Client(CLIENT_ID)
     client.on_connect = on_connect
     client.on_message = on_message
-    client.connect(BROKER, PORT, 60)
-    client.loop_forever()
+    try:
+        client.connect(BROKER, PORT, 60)
+        client.loop_start()  # Use loop_start instead of loop_forever to run in background
+    except Exception as e:
+        print(f"Failed to connect to MQTT broker: {e}")
 
 # Start the MQTT client in a separate thread
 mqtt_thread = threading.Thread(target=mqtt_thread, daemon=True)
