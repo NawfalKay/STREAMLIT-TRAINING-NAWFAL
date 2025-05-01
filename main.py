@@ -21,17 +21,20 @@ while True:
         st.write("Response Raw:")
         st.write(response.text)
 
-        # Cek apakah response JSON valid
+        # Cek apakah response memiliki data dalam format JSON yang valid
         if response.status_code == 200:
+            # Coba memparsing text secara manual
             try:
-                data = response.json()
+                data = response.json()  # Coba mengonversi menjadi JSON
                 with placeholder.container():
                     st.markdown("### 📊 Data Sensor:")
                     st.write(f"🌡️ Suhu       : {data['temperature']} °C")
                     st.write(f"💧 Kelembaban : {data['humidity']} %")
                     st.write(f"📌 Status     : **{data['status']}**")
             except ValueError:
-                st.error("Response tidak dapat dikonversi menjadi JSON")
+                # Jika gagal parsing JSON, tampilkan raw response
+                st.error("Gagal mengonversi response menjadi JSON. Response raw:")
+                st.write(response.text)
         else:
             st.error(f"Server mengembalikan status code {response.status_code}")
 
