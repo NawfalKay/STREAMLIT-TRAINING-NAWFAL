@@ -7,7 +7,7 @@ import time
 # MQTT Configuration
 BROKER = "broker.emqx.io"
 PORT = 1883
-TOPIC_SENSOR = "/Phaethon/Nawfal_Kaysan_Rehma_Ely/data_sensor"
+TOPIC_SENSOR = "sensor/data"
 CLIENT_ID = "streamlit_client"
 
 # Global variable to store sensor data
