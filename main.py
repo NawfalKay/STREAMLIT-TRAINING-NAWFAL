@@ -2,16 +2,19 @@ import streamlit as st
 import requests
 import time
 
-st.title("🔄data sensor")
+st.title("🔄 Data Sensor SUHU dan kelembapan")
 
 # Tempat kosong untuk menampilkan data yang akan diperbarui
 placeholder = st.empty()
 
-# Jalankan loop update otomatis
+# Tentukan URL ngrok dengan HTTPS
+url = "https://0989-103-136-58-244.ngrok-free.app/api/data"
+
+# Jalankan loop update otomatis menggunakan st.experimental_rerun()
 while True:
     try:
-        response = requests.get("http://0989-103-136-58-244.ngrok-free.app/api/data")
-
+        # Ambil data dari API Flask melalui ngrok
+        response = requests.get(url)
         data = response.json()
 
         with placeholder.container():
@@ -25,3 +28,4 @@ while True:
 
     # Tunggu 2 detik sebelum update lagi
     time.sleep(2)
+    st.experimental_rerun()  # Memaksa streamlit untuk refresh
