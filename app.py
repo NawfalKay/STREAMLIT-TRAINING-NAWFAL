@@ -14,7 +14,7 @@ url = "https://27a7-103-136-58-244.ngrok-free.app/api/data"
 while True:
     try:
         # Ambil data dari API Flask melalui ngrok dengan timeout handling
-        response = requests.get(url, timeout=5)  # Set timeout 5 detik
+        response = requests.get("http://27a7-103-136-58-244.ngrok-free.app/api/data")
 
         # Pastikan status 200 OK
         response.raise_for_status()
