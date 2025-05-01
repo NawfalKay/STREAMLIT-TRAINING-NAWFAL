@@ -8,7 +8,8 @@ st.title("🔄 SUHU dan kelembapan")
 placeholder = st.empty()
 
 # Tentukan URL ngrok dengan HTTPS
-url = "https://0989-103-136-58-244.ngrok-free.app/api/data"
+url = "https://8c8c-103-136-58-244.ngrok-free.app/api/data"
+
 
 # Jalankan loop update otomatis
 while True:
