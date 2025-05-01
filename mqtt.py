@@ -5,7 +5,6 @@ import json
 # MQTT Setup
 BROKER = "broker.emqx.io"  # Ganti dengan broker MQTT yang Anda gunakan
 TOPIC_SENSOR = "sensor/data"
-CLIENT_ID = "mqttx_26bc7b34"  # Ganti dengan ID klien unik jika diperlukan
 
 # Global variable to store sensor data
 sensor_data = {"temperature": None, "humidity": None}
@@ -21,7 +20,7 @@ def on_message(client, userdata, msg):
 
 # Setup MQTT client
 def setup_mqtt():
-    client = mqtt.Client(CLIENT_ID)
+    client = mqtt.Client()  # Tanpa CLIENT_ID, Paho MQTT akan membuatkan ID unik
     client.on_message = on_message
     client.connect(BROKER)
     client.subscribe(TOPIC_SENSOR)
